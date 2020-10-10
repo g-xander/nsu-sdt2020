@@ -1,45 +1,36 @@
-(defn my-reduce
-  ([f, ll] (my-reduce f 0 ll))
-  ([f, acc, ll] (my-reduce f acc (first ll) (rest ll)))
-  ([f, acc, head, tail]
-   (if (= head nil)
+(defn r-my-reduce
+  ([f, ll] (r-my-reduce f 0 ll))
+  ([f, acc, ll]
+   (if (= (count ll) 0)
      acc
-     (my-reduce f (f acc head) tail))))
+     (recur f (f acc (first ll)) (rest ll)))))
 
 (defn my-map [f ll]
-  (my-reduce (fn [res item]
-               (conj res (f item)))
-             [] ll))
+  (r-my-reduce (fn [res item]
+                 (conj res (f item)))
+               [] ll))
 
 (defn my-filter [f ll]
-  (my-reduce (fn [res item]
-               (if (f item)
-                 (cons item res)
-                 res))
-             [] ll))
+  (r-my-reduce (fn [res item]
+                 (if (f item)
+                   (cons item res)
+                   res))
+               [] ll))
 
-(defn removeDuplicates [char tmp]
-  (my-filter
-   (fn [tmpEl] (not= (first tmpEl) char))
-   tmp))
-
-(defn constructWithChar [char tmp]
-  (my-map
-   (fn [alpha] (cons char alpha))
-   (removeDuplicates char tmp)))
-
-(defn generateSeq [alphabet tmp]
-  (my-reduce concat
-             '()
-             (my-map
-              (fn [char]  (reverse (constructWithChar char tmp)))
-              alphabet)))
+(defn append-letter ([alphabet tmp]
+                     (r-my-reduce
+                      concat '()
+                      (my-map
+                       (fn [tmpEl]
+                         (reverse
+                          (my-map
+                           (fn [letter] (cons letter tmpEl))
+                           (my-filter (fn [alphaLetter] (not= (first tmpEl) alphaLetter)) alphabet))))
+                       tmp))))
 
 (defn lab14
-  ([alphabet n] (lab14 alphabet (my-map (fn [letter] (list letter)) alphabet) (dec n)))
-  ([alphabet tmp n]
-   (if (= n 0)
-     tmp
-     (recur alphabet (generateSeq alphabet tmp) (dec n)))))
+  ; ([alphabet n] (lab14 alphabet '(()) n))
+  ([alphabet n]
+   (my-map (fn [ss] (reverse ss)) (nth (iterate (fn [tmp] (append-letter alphabet tmp)) (my-map list alphabet)) (dec n)))))
 
 (lab14 '("a" (:b 1) ['c 'd]) 3)

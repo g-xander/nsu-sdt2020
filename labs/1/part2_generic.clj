@@ -1,10 +1,3 @@
-(defn initResult
-  ([alphabet] (initResult alphabet '()))
-  ([alphabet tmp] 
-   (if (= (count alphabet) 0)
-     (reverse tmp)
-     (recur (rest alphabet) (cons (list (first alphabet)) tmp)))))
-
 (defn appendLetter
   ([letter tmp] (appendLetter letter tmp '()))
   ([letter tmp acc]
@@ -22,7 +15,7 @@
      (recur (rest alphabet) tmp (concat acc (reverse (appendLetter (first alphabet) tmp)))))))
 
 (defn lab12
-  ([alphabet n] (lab12 alphabet (dec n) (initResult alphabet)))
+  ([alphabet n] (lab12 alphabet n '(())))
   ([alphabet n res]
    (if (= n 0)
      res
