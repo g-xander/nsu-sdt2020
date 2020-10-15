@@ -15,11 +15,10 @@
   "Lazy sequence version. Find the definite integral of single argument function f @f - function @dx - step"
   ([f dx]
    (let [itg (fn itg
-               ([] (itg (list (do-trapezoidal-rule-step-2 f dx dx) dx)))
-               ([res]
-                (lazy-seq (cons res (itg (list
-                                          (+ (first res) (do-trapezoidal-rule-step-2 f (+ (last res) dx) dx))
-                                          (+ (last res) dx)))))))
+               ([] (iterate #(list
+                              (+ (first %) (do-trapezoidal-rule-step-2 f (+ (last %) dx) dx))
+                              (+ (last %) dx))
+                            (list (do-trapezoidal-rule-step-2 f dx dx) dx))))
          wrap (itg)]
      (fn ([stop]
           (let [steps (quot stop dx)
