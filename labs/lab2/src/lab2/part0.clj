@@ -24,7 +24,7 @@
                   (itg (- stop dx)))))]
      (fn [x] (let [whole (* (quot x dx) dx)
                    leftover (- x whole)]
-               (+ (itg whole) (do-trapezoidal-rule-step-0 f x leftover)))))))
+               (float (+ (itg whole) (do-trapezoidal-rule-step-0 f x leftover))))))))
 
 ;; (let [itg (make-recursive-integrator square 1/10)]
 ;;   (println "1")
