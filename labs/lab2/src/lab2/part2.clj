@@ -23,11 +23,13 @@
      (fn ([stop]
           (let [steps (quot stop dx)
                 leftover (- stop (* steps dx))]
-            (float (+
-                    (first (nth wrap (- steps 1)))
-                    (if (= leftover 0)
-                      0
-                      (do-trapezoidal-rule-step-2 f stop leftover))))))))))
+            (+
+             (if (> steps 0)
+               (first (nth wrap (- steps 1)))
+               0)
+             (if (= leftover 0)
+               0
+               (do-trapezoidal-rule-step-2 f stop leftover)))))))))
 
 ; (let [litg (make-lazy-integrator square 1/10)]
 ;   (println "1")

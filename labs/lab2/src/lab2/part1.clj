@@ -26,7 +26,7 @@
 
      (fn [x] (let [whole (* (quot x dx) dx)
                    leftover (- x whole)]
-               (float (+ (r-itg whole) (do-trapezoidal-rule-step-1 f x leftover))))))))
+               (+ (r-itg whole) (do-trapezoidal-rule-step-1 f x leftover)))))))
 
 ;; (let [mitg (make-memoized-integrator square 1/10)]
 ;;   (println "1")
