@@ -22,15 +22,14 @@
                       concat '()
                       (my-map
                        (fn [tmpEl]
-                         (reverse
-                          (my-map
-                           (fn [letter] (cons letter tmpEl))
-                           (my-filter (fn [alphaLetter] (not= (first tmpEl) alphaLetter)) alphabet))))
+                         (my-map
+                          (fn [letter] (cons letter tmpEl))
+                          (my-filter (fn [alphaLetter] (not= (first tmpEl) alphaLetter)) alphabet)))
                        tmp))))
 
+
 (defn lab14
-  ; ([alphabet n] (lab14 alphabet '(()) n))
   ([alphabet n]
-   (my-map (fn [ss] (reverse ss)) (nth (iterate (fn [tmp] (append-letter alphabet tmp)) (my-map list alphabet)) (dec n)))))
+   (nth (iterate (fn [tmp] (append-letter alphabet tmp)) '(())) n)))
 
 (lab14 '("a" (:b 1) ['c 'd]) 3)
