@@ -1,20 +1,10 @@
 (ns lab3.part1)
 
-;; non-lazy version of partition func
 (defn my-partition
-  "Partition seq into chuncks of length = len"
-  ([len coll]
-   (let [whole (* (quot (count coll) len) len)
-         tail (mod (count coll) len)]
-     (if (= tail 0)
-       (my-partition len coll '())
-       (concat
-        (my-partition len (take whole coll) '())
-        (list (drop whole coll))))))
-  ([len coll acc]
-   (if (= (count coll) 0)
-     (reverse acc)
-     (recur len (drop len coll) (cons (take len coll) acc)))))
+([len coll]
+ (when-let [ss (seq coll)]
+   (let [chunk (take len ss)]
+     (cons chunk (my-partition len (drop len ss)))))))
 
 (defn simulate-heavy-1
   "Simulate heavy test condition"
@@ -37,7 +27,7 @@
   [pred coll block-size]
   (->>
    coll
-   (partition block-size)
+   (my-partition block-size)
    (map #(future (doall (filter pred %))))
    (doall)
    (map deref)
