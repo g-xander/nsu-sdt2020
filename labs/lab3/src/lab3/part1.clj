@@ -30,5 +30,4 @@
    (my-partition block-size)
    (map #(future (doall (filter pred %))))
    (doall)
-   (map deref)
-   (apply concat)))
+   (mapcat deref)))

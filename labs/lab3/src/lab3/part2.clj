@@ -20,21 +20,14 @@
    (even? el)))
 
 (defn run-batch-parallel
-  "@n-threads - how many chunks to run in parallel
-   @pred - condition
+  "@pred - condition
    @coll - collection
    returns lazy-parallel-filtered collection"
 
-  [n-threads pred coll]
-  (when-let [ss (seq coll)]
-    (let [batch (take n-threads coll)]
-      (flatten (concat
-                (doall (map deref (doall
-                                   (map #(future (doall (filter pred %))) batch))))
-                ;; First batch will always be calculated
-                ;; Also with this: (time ) prints correct value of execution time
-                ;; compared to wrapping whole run-batch-parallel body func in lazy-seq
-                (lazy-seq (run-batch-parallel n-threads pred (drop n-threads ss))))))))
+  [pred coll]
+  (lazy-seq
+   (when-let [ss (seq coll)]
+     (doall (map deref (doall (map #(future (doall (filter pred %))) ss)))))))
 
 (defn lazy-parallel-filter
   "@pred - condition
@@ -44,11 +37,13 @@
    @n - number of elements to return
    returns lazy-parallel-filtered collection"
 
-  [pred coll chunk-size batch-psize n]
+  [pred coll chunk-size batch-psize]
   (->>
    coll
    (my-partition-all chunk-size)
-   (run-batch-parallel batch-psize pred)
-   (take n)))
+   (my-partition-all batch-psize)
+   (map (partial run-batch-parallel pred))
+   (mapcat identity) ; remove non-existing elements
+   (apply concat)))
 
-;; (time (lazy-parallel-filter simulate-heavy-2 (range) 2 10 10))
+;; (time (take 10 (lazy-parallel-filter simulate-heavy-2 (range) 2 5)))
