@@ -36,10 +36,9 @@
 
 (deftest my-lazy-parallel-filter-test
   (testing "Correctness of lazy-parallel filter function")
-  (is (= '(0 2 4 6 8 10 12 14 16 18) (take 10 (lab3.part2/lazy-parallel-filter lab3.part2/simulate-heavy-2 (range) 2)))))
-
+  (is (= '(0 2 4 6 8 10 12 14 16 18) (lab3.part2/lazy-parallel-filter lab3.part2/simulate-heavy-2 (range) 1 10 10))))
 (deftest time-compare-single-lazyparallel
   (testing "Testing performance single vs multi-threaded filter"
     (let [timeSf (first (calcTime (lab3.part1/single-filter lab3.part1/simulate-heavy-1 (range 20) 4)))
-          timeLPf (first (calcTime (take 10 (lab3.part2/lazy-parallel-filter lab3.part2/simulate-heavy-2 (range) 2))))]
+          timeLPf (first (calcTime (lab3.part2/lazy-parallel-filter lab3.part2/simulate-heavy-2 (range) 1 10 10)))]
       (is (> timeSf timeLPf)))))
